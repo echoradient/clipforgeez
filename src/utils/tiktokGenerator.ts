@@ -138,6 +138,9 @@ async function generateViaCanvas(
         window.AudioContext ||
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       audioContext = new AudioCtx();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume().catch(() => {});
+      }
       const source = audioContext.createMediaElementSource(videoEl);
       const gainNode = audioContext.createGain();
       gainNode.gain.value = settings.volume || 1.0;
@@ -444,7 +447,10 @@ async function generateViaFFmpeg(
     filterStr = `[0:v]scale=${outW}:-1[fg];color=c=${col}:s=${outW}x${outH}[bg];[bg][fg]overlay=(W-w)/2:(H-h)/2`;
   }
 
-  const audioArgs = settings.audioMode === 'mute' ? ['-an'] : ['-c:a', 'aac', '-b:a', '128k'];
+  const audioArgs =
+    settings.audioMode === 'mute'
+      ? ['-an']
+      : ['-map', '0:a?', '-c:a', 'aac', '-b:a', '192k', '-ar', '44100', '-ac', '2'];
 
   await ffmpeg.exec([
     '-ss',
@@ -453,6 +459,8 @@ async function generateViaFFmpeg(
     duration.toString(),
     '-i',
     inputName,
+    '-map',
+    '0:v:0?',
     '-vf',
     filterStr,
     '-c:v',

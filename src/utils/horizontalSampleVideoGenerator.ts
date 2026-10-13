@@ -19,7 +19,7 @@ export async function createHorizontalSampleVideo(
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Could not initialize canvas context');
 
-  // Subtle audio tone
+  // Rich audible synth sound track for horizontal test video
   const AudioCtx =
     window.AudioContext ||
     (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -27,12 +27,15 @@ export async function createHorizontalSampleVideo(
   let dest: MediaStreamAudioDestinationNode | null = null;
   try {
     audioContext = new AudioCtx();
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().catch(() => {});
+    }
     dest = audioContext.createMediaStreamDestination();
     const osc = audioContext.createOscillator();
     const gain = audioContext.createGain();
     osc.type = 'triangle';
     osc.frequency.setValueAtTime(320, audioContext.currentTime);
-    gain.gain.setValueAtTime(0.04, audioContext.currentTime);
+    gain.gain.setValueAtTime(0.08, audioContext.currentTime);
     osc.connect(gain);
     gain.connect(dest);
     osc.start();

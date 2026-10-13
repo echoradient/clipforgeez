@@ -93,6 +93,7 @@ export default function App() {
 
   // Calculate effective segment duration in seconds
   const effectiveSegmentSeconds = useMemo(() => {
+    if (selectedPreset === '3m') return 180;
     if (selectedPreset === '5m') return 300;
     if (selectedPreset === '10m') return 600;
     if (selectedPreset === '15m') return 900;
@@ -166,10 +167,12 @@ export default function App() {
 
     setVideoMetadata(metadata);
 
-    if (metadata.duration <= 300) {
+    if (metadata.duration <= 180) {
       setSelectedPreset('custom');
       setCustomMinutes('0');
       setCustomSeconds('30');
+    } else if (metadata.duration <= 360) {
+      setSelectedPreset('3m');
     } else if (metadata.duration <= 600) {
       setSelectedPreset('5m');
     } else {

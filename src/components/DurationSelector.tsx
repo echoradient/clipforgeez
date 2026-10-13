@@ -31,15 +31,16 @@ export const DurationSelector: React.FC<DurationSelectorProps> = ({
   isProcessing = false,
 }) => {
   const presets: { id: PresetDuration; label: string; sub: string; seconds: number }[] = [
-    { id: '5m', label: '5 minutes', sub: 'Short clips & shorts', seconds: 300 },
+    { id: '3m', label: '3 minutes', sub: 'Short clips & reels', seconds: 180 },
+    { id: '5m', label: '5 minutes', sub: 'Social clips & shorts', seconds: 300 },
     { id: '10m', label: '10 minutes', sub: 'Standard episodes', seconds: 600 },
     { id: '15m', label: '15 minutes', sub: 'Extended sections', seconds: 900 },
     { id: '30m', label: '30 minutes', sub: 'Long deep dives', seconds: 1800 },
   ];
 
-  // If the video duration is under 5 minutes (e.g. testing or short sample video),
+  // If the video duration is under 3 minutes (e.g. testing or short sample video),
   // offer quick test buttons so the user can easily split a 1m or 2m video!
-  const isShortVideo = metadata.duration < 300;
+  const isShortVideo = metadata.duration < 180;
 
   // Breakdown detail text
   const fullClipsCount = Math.floor(metadata.duration / effectiveSegmentSeconds);
@@ -69,7 +70,7 @@ export const DurationSelector: React.FC<DurationSelectorProps> = ({
       </p>
 
       {/* Preset Buttons Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mb-4">
         {presets.map((preset) => {
           const isSelected = selectedPreset === preset.id;
           const isTooLong = preset.seconds >= metadata.duration;

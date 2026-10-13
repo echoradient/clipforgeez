@@ -19,21 +19,34 @@ export async function createSampleVideo(
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Could not initialize canvas context');
 
-  // Audio Context for a subtle synth tone
+  // Audio Context with audible synth chord track so every split clip has clear original sound
   const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
   let audioContext: AudioContext | null = null;
   let dest: MediaStreamAudioDestinationNode | null = null;
   try {
     audioContext = new AudioCtx();
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().catch(() => {});
+    }
     dest = audioContext.createMediaStreamDestination();
-    const osc = audioContext.createOscillator();
+    
+    // Create dual oscillators for a rich, audible ambient broadcast tone
+    const osc1 = audioContext.createOscillator();
+    const osc2 = audioContext.createOscillator();
     const gain = audioContext.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(220, audioContext.currentTime);
-    gain.gain.setValueAtTime(0.05, audioContext.currentTime);
-    osc.connect(gain);
+
+    osc1.type = 'triangle';
+    osc1.frequency.setValueAtTime(261.63, audioContext.currentTime); // C4
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(329.63, audioContext.currentTime); // E4
+
+    gain.gain.setValueAtTime(0.08, audioContext.currentTime);
+    osc1.connect(gain);
+    osc2.connect(gain);
     gain.connect(dest);
-    osc.start();
+
+    osc1.start();
+    osc2.start();
   } catch {
     // Audio context may be restricted without user gesture, continue video only
   }

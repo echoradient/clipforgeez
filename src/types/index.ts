@@ -24,7 +24,7 @@ export interface ClipSegment {
   size?: number;
 }
 
-export type PresetDuration = '5m' | '10m' | '15m' | '30m' | 'custom' | 'test_30s' | 'test_1m';
+export type PresetDuration = '3m' | '5m' | '10m' | '15m' | '30m' | 'custom' | 'test_30s' | 'test_1m';
 
 export interface SplitProgress {
   currentClip: number;
