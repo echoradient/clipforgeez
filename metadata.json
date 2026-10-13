@@ -1,0 +1,6 @@
+{
+  "name": "ClipForge",
+  "description": "Fast, private browser-based video splitting tool. Turn long videos into perfect downloadable MP4 clips locally without uploading.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
